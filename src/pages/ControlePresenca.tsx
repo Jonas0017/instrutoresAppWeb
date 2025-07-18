@@ -897,7 +897,7 @@ const ControlePresenca = () => {
               <span>Adicionar Aluno</span>
                 </button>
 
-                <button
+              {/* <button
               onClick={() => {
                 console.log('Abrindo relatórios com dados:', {
                   turmaId: turmaId,
@@ -913,7 +913,8 @@ const ControlePresenca = () => {
               <span>📊</span>
               <span>Relatórios</span>
                 </button>
-
+                */}
+                
                 <button
               onClick={() => {
                 console.log('Abrindo sincronização com:', {

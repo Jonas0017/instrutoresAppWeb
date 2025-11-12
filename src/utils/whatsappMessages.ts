@@ -1,42 +1,25 @@
-// utils/whatsappMessages.ts - Wrapper para o whatsappService.ts
-import { getGreeting as getGreetingFromService, getResumo as getResumoFromService, getMotivacao as getMotivacaoFromService } from '../lib/firebase'
+// utils/whatsappMessages.ts
 
 // Função para retornar a saudação com base no horário
 export const getGreeting = async (alunoNome: string): Promise<string> => {
-  try {
-    return await getGreetingFromService(alunoNome)
-  } catch (error) {
-    console.error('Erro ao buscar saudação:', error)
-    // Fallback local
-    const hora = new Date().getHours()
-    let saudacao = "Bom dia"
-    if (hora >= 12 && hora < 18) {
-      saudacao = "Boa tarde"
-    } else if (hora >= 18) {
-      saudacao = "Boa noite"
-    }
-    return `${saudacao}, ${alunoNome}! Tudo bem?`
+  const hora = new Date().getHours()
+  let saudacao = "Bom dia"
+  if (hora >= 12 && hora < 18) {
+    saudacao = "Boa tarde"
+  } else if (hora >= 18) {
+    saudacao = "Boa noite"
   }
+  return `${saudacao}, ${alunoNome}! Tudo bem?`
 }
 
 // Função para obter o link ou mensagem de resumo da palestra
 export const getResumo = async (palestraTitulo: string): Promise<string> => {
-  try {
-    return await getResumoFromService(palestraTitulo)
-  } catch (error) {
-    console.error('Erro ao buscar resumo:', error)
-    return "Resumo não disponível."
-  }
+  return "Resumo não disponível."
 }
 
 // Função para obter a mensagem de motivação da palestra
 export const getMotivacao = async (palestraTitulo: string): Promise<string> => {
-  try {
-    return await getMotivacaoFromService(palestraTitulo)
-  } catch (error) {
-    console.error('Erro ao buscar motivação:', error)
-    return "Mensagem de motivação não disponível."
-  }
+  return "Mensagem de motivação não disponível."
 }
 
 // Função para abrir WhatsApp no navegador

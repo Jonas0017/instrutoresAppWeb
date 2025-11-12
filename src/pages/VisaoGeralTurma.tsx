@@ -391,14 +391,14 @@ const VisaoGeralTurma = () => {
                 <tr className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs">
                   <th
                     rowSpan={2}
-                    className="sticky left-0 z-40 bg-indigo-600 px-3 py-2 text-left font-semibold relative min-w-[180px] w-[180px]"
+                    className="sticky left-0 top-0 z-40 bg-indigo-600 px-3 py-2 text-left font-semibold relative min-w-[180px] w-[180px]"
                   >
                     Aluno
                     <div className="absolute right-0 top-0 bottom-0 w-px bg-white/40"></div>
                   </th>
                   <th
                     rowSpan={2}
-                    className="sticky left-[180px] z-40 bg-indigo-600 px-3 py-2 text-left font-semibold relative min-w-[130px] w-[130px]"
+                    className="sticky left-[180px] top-0 z-40 bg-indigo-600 px-3 py-2 text-left font-semibold relative min-w-[130px] w-[130px]"
                   >
                     WhatsApp
                     <div className="absolute right-0 top-0 bottom-0 w-px bg-white/40"></div>
@@ -408,7 +408,7 @@ const VisaoGeralTurma = () => {
                       key={grupo.palestra.id}
                       colSpan={grupo.colspan}
                       rowSpan={grupo.colspan === 1 ? 2 : 1}
-                      className="px-3 py-2 text-center font-semibold relative"
+                      className="sticky top-0 bg-indigo-600 px-3 py-2 text-center font-semibold relative"
                     >
                       {grupo.palestra.titulo}
                       {index < grupos.length - 1 && (
@@ -425,7 +425,7 @@ const VisaoGeralTurma = () => {
                     return (
                       <th
                         key={`${coluna.palestraId}-${coluna.fragmentoNumero}`}
-                        className="px-2 py-2 text-center font-medium min-w-[80px] relative"
+                        className="sticky top-[40px] bg-indigo-500 px-2 py-2 text-center font-medium min-w-[80px] relative"
                       >
                         {coluna.titulo}
                         {!isLast && (

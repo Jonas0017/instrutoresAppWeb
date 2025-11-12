@@ -51,18 +51,4 @@ export {
   uploadBytes,
   getDownloadURL,
   deleteObject,
-} from 'firebase/storage';
-
-// Re-exporta funções do whatsappService para evitar imports diretos
-export {
-  getGreeting,
-  getResumo,
-  getMotivacao,
-  preloadAllMessages,
-  clearMessageCache,
-  getMessageById,
-  isCacheExpired,
-  getCacheStats,
-  testFirebaseConnection,
-  getTituloLimpoParaMensagem
-} from '../../../utils/whatsappService'; 
+} from 'firebase/storage'; 

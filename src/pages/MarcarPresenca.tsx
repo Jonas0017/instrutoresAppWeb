@@ -26,7 +26,6 @@ const MarcarPresenca = () => {
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState(false);
   const [processando, setProcessando] = useState(false);
-  const [debugInfo, setDebugInfo] = useState<string[]>([]);
 
   useEffect(() => {
     // Decodificar dados da URL
@@ -100,7 +99,7 @@ const MarcarPresenca = () => {
       const match = codigoLimpo.match(/^([a-zA-ZÀ-ÿ]+)(\d{4})$/i);
 
       if (!match) {
-        setErro('Código inválido. Use apenas letras e números (ex: jonas5320)');
+        setErro('Código inválido. Use apenas letras e números (ex: maria7892)');
         return null;
       }
 
@@ -112,16 +111,9 @@ const MarcarPresenca = () => {
 
       const basePath = `paises/${dadosQR.pais}/estados/${dadosQR.estado}/lumisial/${dadosQR.lumisial}/turmas/${dadosQR.turmaId}`;
 
-      const debug: string[] = [];
-      debug.push(`Caminho: ${basePath}/alunos`);
-      debug.push(`Nome buscado: "${nomeBuscaNormalizado}"`);
-      debug.push(`4 dígitos: "${ultimos4Digitos}"`);
-
       // Buscar todos os alunos da turma
       const alunosCollection = collection(firestore, `${basePath}/alunos`);
       const alunosSnapshot = await getDocs(alunosCollection);
-
-      debug.push(`Total alunos: ${alunosSnapshot.docs.length}`);
 
       // Procurar alunos com nome correspondente
       for (const alunoDoc of alunosSnapshot.docs) {
@@ -136,37 +128,22 @@ const MarcarPresenca = () => {
         const digitosWhatsapp = whatsapp.replace(/\D/g, '');
         const ultimos4WhatsApp = digitosWhatsapp.slice(-4);
 
-        debug.push(`\nAluno: ${nomeAluno}`);
-        debug.push(`  1º nome norm: "${primeiroNomeNormalizado}"`);
-        debug.push(`  WhatsApp: ${whatsapp}`);
-        debug.push(`  Últimos 4: "${ultimos4WhatsApp}"`);
-        debug.push(`  Status: ${alunoData.status || 'ativo'}`);
-
         // Verificar se o primeiro nome corresponde (comparação normalizada)
         if (primeiroNomeNormalizado === nomeBuscaNormalizado) {
-          debug.push(`  ✅ Nome OK!`);
-
           // Verificar se aluno está ativo
           if (alunoData.status === 'desativado') {
-            setDebugInfo(debug);
             setErro('Aluno desativado. Entre em contato com o instrutor.');
             return null;
           }
 
           // Verificar os últimos 4 dígitos do WhatsApp
           if (ultimos4WhatsApp === ultimos4Digitos) {
-            debug.push(`  ✅ WhatsApp OK!`);
-            setDebugInfo(debug);
             // Aluno encontrado e validado!
             return alunoDoc.id;
-          } else {
-            debug.push(`  ❌ WhatsApp diferente`);
           }
         }
       }
 
-      debug.push(`\n❌ Nenhum aluno encontrado`);
-      setDebugInfo(debug);
       // Nenhum aluno encontrado com nome e WhatsApp correspondentes
       return null;
     } catch (error) {
@@ -322,7 +299,7 @@ const MarcarPresenca = () => {
               setCodigoAluno(valorLimpo);
               setErro('');
             }}
-            placeholder="Ex: jonas5320"
+            placeholder="Ex: maria7892"
             required
             disabled={processando}
           />
@@ -333,15 +310,6 @@ const MarcarPresenca = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <p className="text-sm text-red-800">{erro}</p>
-            </div>
-          )}
-
-          {debugInfo.length > 0 && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <p className="text-xs font-bold text-yellow-900 mb-2">🔍 DEBUG:</p>
-              <pre className="text-xs text-yellow-900 whitespace-pre-wrap font-mono">
-                {debugInfo.join('\n')}
-              </pre>
             </div>
           )}
 
@@ -361,7 +329,7 @@ const MarcarPresenca = () => {
               <div className="text-sm text-blue-800">
                 <p className="font-medium mb-1">Como criar seu código:</p>
                 <p>Digite seu <strong>primeiro nome</strong> + <strong>últimos 4 dígitos do WhatsApp</strong></p>
-                <p className="mt-1 text-xs">Exemplo: Se seu nome é Jonas e WhatsApp termina em 5320, digite: <strong>jonas5320</strong></p>
+                <p className="mt-1 text-xs">Exemplo: Se seu nome é Maria e WhatsApp termina em 7892, digite: <strong>maria7892</strong></p>
               </div>
             </div>
           </div>

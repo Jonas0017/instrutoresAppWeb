@@ -384,21 +384,21 @@ const VisaoGeralTurma = () => {
 
         {/* Tabela */}
         <Card className="overflow-hidden shadow-lg">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto max-h-[calc(100vh-300px)] overflow-y-auto">
             <table className="w-full min-w-max" style={{ borderSpacing: 0 }}>
-              <thead>
+              <thead className="sticky top-0 z-30">
                 {/* Primeira linha: Nome das palestras */}
                 <tr className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs">
                   <th
                     rowSpan={2}
-                    className="sticky left-0 z-20 bg-indigo-600 px-3 py-2 text-left font-semibold relative min-w-[180px] w-[180px]"
+                    className="sticky left-0 z-40 bg-indigo-600 px-3 py-2 text-left font-semibold relative min-w-[180px] w-[180px]"
                   >
                     Aluno
                     <div className="absolute right-0 top-0 bottom-0 w-px bg-white/40"></div>
                   </th>
                   <th
                     rowSpan={2}
-                    className="sticky left-[180px] z-20 bg-indigo-600 px-3 py-2 text-left font-semibold relative min-w-[130px] w-[130px]"
+                    className="sticky left-[180px] z-40 bg-indigo-600 px-3 py-2 text-left font-semibold relative min-w-[130px] w-[130px]"
                   >
                     WhatsApp
                     <div className="absolute right-0 top-0 bottom-0 w-px bg-white/40"></div>

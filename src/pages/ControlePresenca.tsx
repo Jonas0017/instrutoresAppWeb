@@ -8,6 +8,7 @@ import { ModalHistoricoAluno } from '../components/ModalHistoricoAluno'
 import { ModalTransferenciaAluno } from '../components/ModalTransferenciaAluno'
 import { useHistoricoAluno } from '../hooks/useHistoricoAluno'
 import { HistoricoAluno } from '../types'
+import { getGreeting, getResumo, getMotivacao } from '../utils/whatsappMessages'
 
 interface Aluno {
   id: string
@@ -478,25 +479,36 @@ const ControlePresenca = () => {
   }
 
   // Função para abrir WhatsApp
-  const abrirWhatsApp = (tipo: 'conversa' | 'resumo' | 'motivacao') => {
+  const abrirWhatsApp = async (tipo: 'conversa' | 'resumo' | 'motivacao') => {
     if (!alunoSelecionado?.whatsapp) return
 
     const numeroFormatado = alunoSelecionado.whatsapp.replace(/\D/g, "")
     const codigoPaisFormatado = alunoSelecionado.codigoPais?.replace(/\D/g, "") || "55"
     const numeroCompleto = `${codigoPaisFormatado}${numeroFormatado}`
 
-    let mensagem = `Olá ${alunoSelecionado.nome}!`
-    const palestraTitulo = `Lição ${palestraAtual}: ${palestras[palestraAtual - 1]?.titulo}`
+    const saudacao = await getGreeting(alunoSelecionado.nome)
+    let mensagem = saudacao
+    const palestraTitulo = palestras[palestraAtual - 1]?.titulo || ""
 
     switch (tipo) {
       case "conversa":
-        mensagem += "\nGostaria de conversar com você sobre a aula."
+        mensagem += "\n\nGostaria de conversar com você sobre a aula."
         break
       case "resumo":
-        mensagem += `\nAqui está o resumo da aula "${palestraTitulo}"`
+        const resumoUrl = await getResumo(palestraTitulo)
+        if (resumoUrl !== "📄 O resumo ainda não está disponível.") {
+          mensagem += `\n\n📚 ${palestraTitulo}\n\n${resumoUrl}`
+        } else {
+          mensagem += `\n\n📚 ${palestraTitulo}\n\n${resumoUrl}`
+        }
         break
       case "motivacao":
-        mensagem += `\nEsperamos você na próxima aula! Continue firme no trabalho interior.`
+        const motivacao = await getMotivacao(palestraTitulo)
+        if (motivacao) {
+          mensagem += `\n\n💪 ${palestraTitulo}\n\n${motivacao}`
+        } else {
+          mensagem += `\n\n💪 ${palestraTitulo}\n\nEsperamos você na próxima aula! Continue firme no trabalho interior. 🙏`
+        }
         break
     }
 

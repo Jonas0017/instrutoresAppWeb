@@ -26,6 +26,7 @@ const MarcarPresenca = () => {
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState(false);
   const [processando, setProcessando] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<string[]>([]);
 
   useEffect(() => {
     // Decodificar dados da URL
@@ -111,9 +112,16 @@ const MarcarPresenca = () => {
 
       const basePath = `paises/${dadosQR.pais}/estados/${dadosQR.estado}/lumisial/${dadosQR.lumisial}/turmas/${dadosQR.turmaId}`;
 
+      const debug: string[] = [];
+      debug.push(`Caminho: ${basePath}/alunos`);
+      debug.push(`Nome buscado: "${nomeBuscaNormalizado}"`);
+      debug.push(`4 dígitos: "${ultimos4Digitos}"`);
+
       // Buscar todos os alunos da turma
       const alunosCollection = collection(firestore, `${basePath}/alunos`);
       const alunosSnapshot = await getDocs(alunosCollection);
+
+      debug.push(`Total alunos: ${alunosSnapshot.docs.length}`);
 
       // Procurar alunos com nome correspondente
       for (const alunoDoc of alunosSnapshot.docs) {
@@ -124,26 +132,41 @@ const MarcarPresenca = () => {
         const primeiroNome = nomeAluno.split(' ')[0];
         const primeiroNomeNormalizado = normalizarTexto(primeiroNome);
 
+        const whatsapp = alunoData.whatsapp || '';
+        const digitosWhatsapp = whatsapp.replace(/\D/g, '');
+        const ultimos4WhatsApp = digitosWhatsapp.slice(-4);
+
+        debug.push(`\nAluno: ${nomeAluno}`);
+        debug.push(`  1º nome norm: "${primeiroNomeNormalizado}"`);
+        debug.push(`  WhatsApp: ${whatsapp}`);
+        debug.push(`  Últimos 4: "${ultimos4WhatsApp}"`);
+        debug.push(`  Status: ${alunoData.status || 'ativo'}`);
+
         // Verificar se o primeiro nome corresponde (comparação normalizada)
         if (primeiroNomeNormalizado === nomeBuscaNormalizado) {
+          debug.push(`  ✅ Nome OK!`);
+
           // Verificar se aluno está ativo
           if (alunoData.status === 'desativado') {
+            setDebugInfo(debug);
             setErro('Aluno desativado. Entre em contato com o instrutor.');
             return null;
           }
 
           // Verificar os últimos 4 dígitos do WhatsApp
-          const whatsapp = alunoData.whatsapp || '';
-          const digitosWhatsapp = whatsapp.replace(/\D/g, ''); // Remove tudo que não é dígito
-          const ultimos4WhatsApp = digitosWhatsapp.slice(-4);
-
           if (ultimos4WhatsApp === ultimos4Digitos) {
+            debug.push(`  ✅ WhatsApp OK!`);
+            setDebugInfo(debug);
             // Aluno encontrado e validado!
             return alunoDoc.id;
+          } else {
+            debug.push(`  ❌ WhatsApp diferente`);
           }
         }
       }
 
+      debug.push(`\n❌ Nenhum aluno encontrado`);
+      setDebugInfo(debug);
       // Nenhum aluno encontrado com nome e WhatsApp correspondentes
       return null;
     } catch (error) {
@@ -310,6 +333,15 @@ const MarcarPresenca = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <p className="text-sm text-red-800">{erro}</p>
+            </div>
+          )}
+
+          {debugInfo.length > 0 && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <p className="text-xs font-bold text-yellow-900 mb-2">🔍 DEBUG:</p>
+              <pre className="text-xs text-yellow-900 whitespace-pre-wrap font-mono">
+                {debugInfo.join('\n')}
+              </pre>
             </div>
           )}
 

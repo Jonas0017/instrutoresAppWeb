@@ -267,7 +267,7 @@ export class ReposicoesService {
         try {
             const numeroFormatado = whatsapp.replace(/\D/g, '')
             const codigoPaisFormatado = codigoPais?.replace(/\D/g, '') || '55'
-            const numeroCompleto = `+${codigoPaisFormatado}${numeroFormatado}`
+            const numeroCompleto = `${codigoPaisFormatado}${numeroFormatado}`
 
             const mensagem = `📅 *REPOSIÇÃO AGENDADA*\n\n` +
                 `Olá ${reposicao.alunoNome}!\n\n` +
@@ -278,7 +278,7 @@ export class ReposicoesService {
                 `${reposicao.observacoes ? `📝 *Observações:* ${reposicao.observacoes}\n\n` : ''}` +
                 `Aguardamos você na reposição! 🙏`
 
-            const url = `https://wa.me/${numeroCompleto}?text=${encodeURIComponent(mensagem)}`
+            const url = `https://web.whatsapp.com/send?phone=${numeroCompleto}&text=${encodeURIComponent(mensagem)}`
             window.open(url, '_blank')
         } catch (error) {
             console.error('Erro ao enviar notificação WhatsApp:', error)

@@ -104,7 +104,7 @@ export const getResumo = async (palestraTitulo: string): Promise<string> => {
     // Mapear título para ID da palestra
     const palestraId = getPalestraIdByTitle(palestraTitulo)
     if (!palestraId) {
-      return "O resumo ainda não está disponível."
+      return "📄 O resumo ainda não está disponível."
     }
 
     const resumoKey = `palestra_${palestraId}_resumo`
@@ -118,11 +118,11 @@ export const getResumo = async (palestraTitulo: string): Promise<string> => {
     }
 
     const resumoData = messageCache.get(resumoKey)
-    return resumoData?.url || "O resumo ainda não está disponível."
+    return resumoData?.url || "📄 O resumo ainda não está disponível."
 
   } catch (error) {
     console.error("Erro ao buscar resumo:", error)
-    return "O resumo ainda não está disponível."
+    return "📄 O resumo ainda não está disponível."
   }
 }
 
@@ -162,8 +162,8 @@ export const abrirWhatsApp = (
 ): void => {
   const numeroFormatado = whatsapp.replace(/\D/g, "")
   const codigoPaisFormatado = codigoPais.replace(/\D/g, "") || "55"
-  const numeroCompleto = `+${codigoPaisFormatado}${numeroFormatado}`
-  
-  const url = `https://wa.me/${numeroCompleto}?text=${encodeURIComponent(mensagem)}`
+  const numeroCompleto = `${codigoPaisFormatado}${numeroFormatado}`
+
+  const url = `https://web.whatsapp.com/send?phone=${numeroCompleto}&text=${encodeURIComponent(mensagem)}`
   window.open(url, '_blank')
 }

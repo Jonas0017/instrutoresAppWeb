@@ -76,9 +76,9 @@ export const ModalHistoricoAluno: React.FC<HistoricoAlunoModalProps> = ({
       
       const numeroFormatado = aluno.whatsapp.replace(/\D/g, '')
       const codigoPaisFormatado = aluno.codigoPais?.replace(/\D/g, '') || '55'
-      const numeroCompleto = `+${codigoPaisFormatado}${numeroFormatado}`
-      
-      const url = `https://wa.me/${numeroCompleto}?text=${encodeURIComponent(mensagemCompleta)}`
+      const numeroCompleto = `${codigoPaisFormatado}${numeroFormatado}`
+
+      const url = `https://web.whatsapp.com/send?phone=${numeroCompleto}&text=${encodeURIComponent(mensagemCompleta)}`
       window.open(url, '_blank')
       
       if (onCompartilharHistorico) {

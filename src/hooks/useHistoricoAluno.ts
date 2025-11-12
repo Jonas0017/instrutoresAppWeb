@@ -91,9 +91,9 @@ export const useHistoricoAluno = () => {
       
       const numeroFormatado = whatsapp.replace(/\D/g, '')
       const codigoPaisFormatado = codigoPais?.replace(/\D/g, '') || '55'
-      const numeroCompleto = `+${codigoPaisFormatado}${numeroFormatado}`
-      
-      const url = `https://wa.me/${numeroCompleto}?text=${encodeURIComponent(mensagemCompleta)}`
+      const numeroCompleto = `${codigoPaisFormatado}${numeroFormatado}`
+
+      const url = `https://web.whatsapp.com/send?phone=${numeroCompleto}&text=${encodeURIComponent(mensagemCompleta)}`
       window.open(url, '_blank')
       return true
     } catch (error) {

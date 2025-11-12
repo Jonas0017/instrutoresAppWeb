@@ -218,7 +218,7 @@ const ModalMensagens = ({ onFechar }: { onFechar: () => void }) => {
       }
 
       // Abre o WhatsApp para seleção manual do contato
-      const url = `https://wa.me/?text=${encodeURIComponent(mensagem)}`
+      const url = `https://web.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`
       window.open(url, '_blank')
 
       onFechar()

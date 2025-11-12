@@ -483,7 +483,7 @@ const ControlePresenca = () => {
 
     const numeroFormatado = alunoSelecionado.whatsapp.replace(/\D/g, "")
     const codigoPaisFormatado = alunoSelecionado.codigoPais?.replace(/\D/g, "") || "55"
-    const numeroCompleto = `+${codigoPaisFormatado}${numeroFormatado}`
+    const numeroCompleto = `${codigoPaisFormatado}${numeroFormatado}`
 
     let mensagem = `Olá ${alunoSelecionado.nome}!`
     const palestraTitulo = `Lição ${palestraAtual}: ${palestras[palestraAtual - 1]?.titulo}`
@@ -500,7 +500,7 @@ const ControlePresenca = () => {
         break
     }
 
-    const url = `https://wa.me/${numeroCompleto}?text=${encodeURIComponent(mensagem)}`
+    const url = `https://web.whatsapp.com/send?phone=${numeroCompleto}&text=${encodeURIComponent(mensagem)}`
     window.open(url, '_blank')
   }
 

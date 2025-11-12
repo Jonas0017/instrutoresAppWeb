@@ -17,6 +17,12 @@ interface Turma {
   obs?: string
 }
 
+interface Palestra {
+  id: string
+  titulo: string
+  data: string
+}
+
 const ConsultarTurmas = () => {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
@@ -28,12 +34,14 @@ const ConsultarTurmas = () => {
   const [instrutorSelecionado, setInstrutorSelecionado] = useState<string | null>(null)
   const [anoSelecionado, setAnoSelecionado] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
+  
 
   // Função para obter o caminho base do Firestore
   const getBasePath = () => {
     if (!user) return ""
     return `paises/${user.pais}/estados/${user.estado}/lumisial/${user.lumisial}`
   }
+
 
   // Busca turmas e organiza dados
   const fetchTurmas = async () => {
@@ -279,12 +287,18 @@ const ConsultarTurmas = () => {
                   )}
                 </div>
 
-                <div className="flex space-x-2 ml-4">
+                <div className="flex flex-wrap gap-2 ml-4">
                   <button
                     onClick={() => navigate(`/controle-presenca/${turma.id}`)}
                     className="btn-primary text-sm"
                   >
                     Presença
+                  </button>
+                  <button
+                    onClick={() => navigate(`/visao-geral/${turma.id}`)}
+                    className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-medium py-2 px-3 rounded-lg transition-colors text-sm"
+                  >
+                    Visão Geral
                   </button>
                   <button
                     onClick={() => navigate(`/inserir-turma/${turma.id}`)}
@@ -316,6 +330,7 @@ const ConsultarTurmas = () => {
           </div>
         )}
       </div>
+
     </div>
   )
 }

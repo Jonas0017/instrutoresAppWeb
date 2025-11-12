@@ -4,6 +4,10 @@ import { collection, getDocs, doc, updateDoc, getDoc, deleteDoc, db as firestore
 import { useAuth } from '../context/AuthContext'
 import Loading from '../components/Loading'
 import Navigation from '../components/Navigation'
+import { ModalHistoricoAluno } from '../components/ModalHistoricoAluno'
+import { ModalTransferenciaAluno } from '../components/ModalTransferenciaAluno'
+import { useHistoricoAluno } from '../hooks/useHistoricoAluno'
+import { HistoricoAluno } from '../types'
 
 interface Aluno {
   id: string
@@ -174,7 +178,9 @@ const ModalOpcoesAluno = ({
   onClose, 
   onWhatsApp, 
   onDesativar, 
-  onRemover 
+  onRemover,
+  onAbrirHistorico,
+  onTransferirAluno
 }: {
   aluno: Aluno | null
   palestraTitulo: string
@@ -183,6 +189,8 @@ const ModalOpcoesAluno = ({
   onWhatsApp: (tipo: 'conversa' | 'resumo' | 'motivacao') => void
   onDesativar: () => void
   onRemover: () => void
+  onAbrirHistorico: (aluno: Aluno) => void
+  onTransferirAluno: (aluno: Aluno) => void
 }) => {
   if (!isVisible || !aluno) return null
 
@@ -225,6 +233,39 @@ const ModalOpcoesAluno = ({
               </div>
             </div>
           )}
+
+          {/* Ações de Histórico e Transferência */}
+          <div className="mb-6">
+            <h3 className="text-sm font-medium text-gray-700 mb-3">📊 Histórico</h3>
+            <div className="space-y-2">
+              <button
+                onClick={async (e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  if (aluno) {
+                    await onAbrirHistorico(aluno)
+                    onClose()
+                  }
+                }}
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+              >
+                📈 Ver Histórico Completo
+              </button>
+              <button
+                onClick={async (e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  if (aluno) {
+                    await onTransferirAluno(aluno)
+                    onClose()
+                  }
+                }}
+                className="w-full bg-purple-500 hover:bg-purple-600 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+              >
+                🔄 Transferir para Outra Turma
+              </button>
+            </div>
+          </div>
 
           {/* Ações de Gerenciamento */}
           <div className="mb-6">
@@ -273,6 +314,24 @@ const ControlePresenca = () => {
   const [isModalDetalhesVisible, setIsModalDetalhesVisible] = useState(false)
   const [isModalOpcoesVisible, setIsModalOpcoesVisible] = useState(false)
   const [isModalEditarStatusVisible, setIsModalEditarStatusVisible] = useState(false)
+  
+  // Estados para histórico e transferência
+  const [isModalHistoricoVisible, setIsModalHistoricoVisible] = useState(false)
+  const [isModalTransferenciaVisible, setIsModalTransferenciaVisible] = useState(false)
+  const [alunoSelecionadoHistorico, setAlunoSelecionadoHistorico] = useState<Aluno | null>(null)
+  
+  // Hook para histórico
+  const {
+    historico,
+    turmasDisponiveis,
+    loading: loadingHistorico,
+    loadingTransferencia,
+    buscarHistorico,
+    buscarTurmasDisponiveis,
+    transferirAluno,
+    compartilharHistoricoWhatsApp,
+    limparDados
+  } = useHistoricoAluno()
 
   // Estados para WebViews
   const [showReportRelatorio, setShowReportRelatorio] = useState(false)
@@ -566,6 +625,72 @@ const ControlePresenca = () => {
     const currentPalestra = palestras[palestraAtual - 1]
     if (!currentPalestra) return
     navigate(`/inserir-aluno/${turmaId}/${currentPalestra.id}`)
+  }
+
+  // Funções para histórico e transferência
+  const handleAbrirHistorico = async (aluno: Aluno) => {
+    setAlunoSelecionadoHistorico(aluno)
+    setIsModalHistoricoVisible(true)
+    if (user) {
+      const basePath = `paises/${user.pais}/estados/${user.estado}/lumisial/${user.lumisial}/turmas/${turmaId}`
+      try {
+        await buscarHistorico(basePath, turmaId || '', aluno.id)
+      } catch (error) {
+        console.error('❌ Erro ao carregar histórico:', error)
+      }
+    }
+  }
+
+  const handleTransferirAluno = async (aluno: Aluno) => {
+    setAlunoSelecionadoHistorico(aluno)
+    if (user) {
+      const basePath = `paises/${user.pais}/estados/${user.estado}/lumisial/${user.lumisial}`
+      await buscarTurmasDisponiveis(basePath, turmaId || '')
+    }
+    setIsModalTransferenciaVisible(true)
+  }
+
+  const handleConfirmarTransferencia = async (alunoId: string, turmaDestinoId: string) => {
+    if (!user) return
+
+    try {
+      const basePath = `paises/${user.pais}/estados/${user.estado}/lumisial/${user.lumisial}`
+      await transferirAluno(basePath, alunoId, turmaId || '', turmaDestinoId)
+      
+      alert('Aluno transferido com sucesso!')
+      setIsModalTransferenciaVisible(false)
+      setAlunoSelecionadoHistorico(null)
+      
+      // Recarregar lista de alunos
+      const currentPalestra = palestras[palestraAtual - 1]
+      if (currentPalestra?.id) {
+        fetchPresenca(currentPalestra.id)
+      }
+    } catch (error) {
+      console.error('Erro ao transferir aluno:', error)
+      alert('Erro ao transferir aluno. Tente novamente.')
+    }
+  }
+
+  const handleCompartilharHistorico = async (historico: HistoricoAluno) => {
+    if (alunoSelecionadoHistorico) {
+      await compartilharHistoricoWhatsApp(
+        historico,
+        alunoSelecionadoHistorico.whatsapp,
+        alunoSelecionadoHistorico.codigoPais
+      )
+    }
+  }
+
+  const handleFecharHistorico = () => {
+    setIsModalHistoricoVisible(false)
+    setAlunoSelecionadoHistorico(null)
+    limparDados()
+  }
+
+  const handleFecharTransferencia = () => {
+    setIsModalTransferenciaVisible(false)
+    setAlunoSelecionadoHistorico(null)
   }
 
   // Modal para editar status
@@ -897,6 +1022,14 @@ const ControlePresenca = () => {
               <span>Adicionar Aluno</span>
                 </button>
 
+                <button
+                  onClick={() => navigate(`/reposicoes/${turmaId}`)}
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2"
+                >
+                  <span>📅</span>
+                  <span>Reposições</span>
+                </button>
+
               {/* <button
               onClick={() => {
                 console.log('Abrindo relatórios com dados:', {
@@ -953,6 +1086,8 @@ const ControlePresenca = () => {
          onWhatsApp={abrirWhatsApp}
          onDesativar={desativarAlunoEmTodasAulas}
          onRemover={removerAlunoCompletamente}
+         onAbrirHistorico={handleAbrirHistorico}
+         onTransferirAluno={handleTransferirAluno}
        />
 
        <ModalEditarStatus
@@ -964,6 +1099,28 @@ const ControlePresenca = () => {
              atualizarStatusExtras(alunoSelecionado.id, novaData, novoInstrutor, reposicao, atraso)
            }
          }}
+       />
+
+       {/* Modal de Histórico */}
+       <ModalHistoricoAluno
+         visible={isModalHistoricoVisible}
+         aluno={alunoSelecionadoHistorico}
+         turmaId={turmaId || ''}
+         basePath={user ? `paises/${user.pais}/estados/${user.estado}/lumisial/${user.lumisial}/turmas/${turmaId}` : ''}
+         onFechar={handleFecharHistorico}
+         onTransferirAluno={handleTransferirAluno}
+         onCompartilharHistorico={handleCompartilharHistorico}
+       />
+
+       {/* Modal de Transferência */}
+       <ModalTransferenciaAluno
+         visible={isModalTransferenciaVisible}
+         aluno={alunoSelecionadoHistorico}
+         turmaAtual={turmaId || ''}
+         turmasDisponiveis={turmasDisponiveis}
+         onFechar={handleFecharTransferencia}
+         onConfirmar={handleConfirmarTransferencia}
+         loading={loadingTransferencia}
        />
 
             {/* Modal WebView Relatórios - EXATAMENTE como no app móvel */}

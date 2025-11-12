@@ -12,6 +12,9 @@ import ControlePresenca from './pages/ControlePresenca';
 import InserirTurma from './pages/InserirTurma';
 import InserirAluno from './pages/InserirAluno';
 import PerfilUsuario from './pages/PerfilUsuario';
+import Reposicoes from './pages/Reposicoes';
+import MarcarPresenca from './pages/MarcarPresenca';
+import VisaoGeralTurma from './pages/VisaoGeralTurma';
 
 function App() {
   return (
@@ -21,9 +24,10 @@ function App() {
           <ConfirmProvider>
             <div className="min-h-screen bg-gray-50">
               <Routes>
-                {/* Rota pública */}
+                {/* Rotas públicas */}
                 <Route path="/login" element={<Login />} />
-                
+                <Route path="/marcar-presenca" element={<MarcarPresenca />} />
+
                 {/* Rotas protegidas */}
                 <Route path="/" element={
                   <ProtectedRoute>
@@ -73,6 +77,18 @@ function App() {
                   </ProtectedRoute>
                 } />
                 
+                <Route path="/reposicoes/:turmaId" element={
+                  <ProtectedRoute>
+                    <Reposicoes />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/visao-geral/:turmaId" element={
+                  <ProtectedRoute>
+                    <VisaoGeralTurma />
+                  </ProtectedRoute>
+                } />
+
                 {/* Rota padrão - redireciona para login */}
                 <Route path="*" element={<Navigate to="/login" replace />} />
               </Routes>

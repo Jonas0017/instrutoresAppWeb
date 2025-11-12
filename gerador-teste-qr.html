@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de URLs de Teste - QR Code Presença</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #334155;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .resultado {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+
+        .resultado.show {
+            display: block;
+        }
+
+        .resultado h3 {
+            color: #334155;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .url-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #475569;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .btn-copy {
+            padding: 10px 20px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-copy:hover {
+            background: #059669;
+        }
+
+        .btn-open {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 10px;
+        }
+
+        .btn-open:hover {
+            background: #2563eb;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            background: #dcfce7;
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            color: #166534;
+            margin-top: 10px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .presets {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .preset-btn {
+            padding: 10px;
+            background: #f1f5f9;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            font-weight: 500;
+            color: #475569;
+        }
+
+        .preset-btn:hover {
+            background: #e2e8f0;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Gerador de URLs de Teste</h1>
+        <p class="subtitle">Crie URLs para testar o sistema de marcação de presença por QR Code</p>
+
+        <div class="presets">
+            <button class="preset-btn" onclick="loadPreset('valido')">📝 Dados Válidos</button>
+            <button class="preset-btn" onclick="loadPreset('incompleto')">⚠️ Dados Incompletos</button>
+            <button class="preset-btn" onclick="loadPreset('turmaInexistente')">❌ Turma Inexistente</button>
+            <button class="preset-btn" onclick="loadPreset('fragmento2')">📚 Com Fragmento 2</button>
+        </div>
+
+        <form id="formGerar" onsubmit="gerarURL(event)">
+            <div class="form-group">
+                <label for="pais">País</label>
+                <input type="text" id="pais" value="Brasil" required>
+            </div>
+
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <input type="text" id="estado" value="SP" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lumisial">Lumisial</label>
+                <input type="text" id="lumisial" value="São Paulo" required>
+            </div>
+
+            <div class="form-group">
+                <label for="turmaId">ID da Turma</label>
+                <input type="text" id="turmaId" value="T001" required>
+            </div>
+
+            <div class="form-group">
+                <label for="palestraId">ID da Palestra</label>
+                <input type="text" id="palestraId" value="P001" required>
+            </div>
+
+            <div class="form-group">
+                <label for="fragmentoNumero">Número do Fragmento</label>
+                <input type="number" id="fragmentoNumero" value="1" min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nomePalestra">Nome da Palestra</label>
+                <input type="text" id="nomePalestra" value="Introdução ao Curso" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nomeInstrutor">Nome do Instrutor</label>
+                <input type="text" id="nomeInstrutor" value="João Silva" required>
+            </div>
+
+            <button type="submit" class="btn">🚀 Gerar URL de Teste</button>
+        </form>
+
+        <div id="resultado" class="resultado">
+            <h3>✅ URL Gerada com Sucesso!</h3>
+            <div id="urlBox" class="url-box"></div>
+            <div>
+                <button class="btn-copy" onclick="copiarURL()">📋 Copiar URL</button>
+                <button class="btn-open" onclick="abrirURL()">🌐 Abrir em Nova Aba</button>
+            </div>
+            <div id="alert" class="alert">URL copiada para a área de transferência!</div>
+        </div>
+    </div>
+
+    <script>
+        let urlGerada = '';
+
+        function loadPreset(tipo) {
+            switch(tipo) {
+                case 'valido':
+                    document.getElementById('pais').value = 'Brasil';
+                    document.getElementById('estado').value = 'SP';
+                    document.getElementById('lumisial').value = 'São Paulo';
+                    document.getElementById('turmaId').value = 'T001';
+                    document.getElementById('palestraId').value = 'P001';
+                    document.getElementById('fragmentoNumero').value = '1';
+                    document.getElementById('nomePalestra').value = 'Introdução ao Curso';
+                    document.getElementById('nomeInstrutor').value = 'João Silva';
+                    break;
+
+                case 'incompleto':
+                    document.getElementById('pais').value = 'Brasil';
+                    document.getElementById('estado').value = 'SP';
+                    document.getElementById('lumisial').value = '';
+                    document.getElementById('turmaId').value = '';
+                    document.getElementById('palestraId').value = '';
+                    break;
+
+                case 'turmaInexistente':
+                    document.getElementById('pais').value = 'Brasil';
+                    document.getElementById('estado').value = 'SP';
+                    document.getElementById('lumisial').value = 'São Paulo';
+                    document.getElementById('turmaId').value = 'T999';
+                    document.getElementById('palestraId').value = 'P999';
+                    document.getElementById('fragmentoNumero').value = '1';
+                    document.getElementById('nomePalestra').value = 'Turma Inexistente';
+                    document.getElementById('nomeInstrutor').value = 'Teste';
+                    break;
+
+                case 'fragmento2':
+                    document.getElementById('pais').value = 'Brasil';
+                    document.getElementById('estado').value = 'SP';
+                    document.getElementById('lumisial').value = 'São Paulo';
+                    document.getElementById('turmaId').value = 'T001';
+                    document.getElementById('palestraId').value = 'P001';
+                    document.getElementById('fragmentoNumero').value = '2';
+                    document.getElementById('nomePalestra').value = 'Continuação do Curso';
+                    document.getElementById('nomeInstrutor').value = 'João Silva';
+                    break;
+            }
+        }
+
+        function gerarURL(event) {
+            event.preventDefault();
+
+            const dados = {
+                pais: document.getElementById('pais').value,
+                estado: document.getElementById('estado').value,
+                lumisial: document.getElementById('lumisial').value,
+                turmaId: document.getElementById('turmaId').value,
+                palestraId: document.getElementById('palestraId').value,
+                fragmentoNumero: parseInt(document.getElementById('fragmentoNumero').value),
+                nomePalestra: document.getElementById('nomePalestra').value,
+                nomeInstrutor: document.getElementById('nomeInstrutor').value
+            };
+
+            const dadosJSON = JSON.stringify(dados);
+            const dadosBase64 = btoa(unescape(encodeURIComponent(dadosJSON)));
+            const baseURL = window.location.origin || 'http://localhost:3000';
+            urlGerada = `${baseURL}/marcar-presenca?data=${encodeURIComponent(dadosBase64)}`;
+
+            document.getElementById('urlBox').textContent = urlGerada;
+            document.getElementById('resultado').classList.add('show');
+            document.getElementById('alert').classList.remove('show');
+        }
+
+        function copiarURL() {
+            navigator.clipboard.writeText(urlGerada).then(() => {
+                const alert = document.getElementById('alert');
+                alert.classList.add('show');
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                }, 3000);
+            });
+        }
+
+        function abrirURL() {
+            window.open(urlGerada, '_blank');
+        }
+    </script>
+</body>
+</html>

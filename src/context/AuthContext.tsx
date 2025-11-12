@@ -14,7 +14,7 @@ interface User {
 interface AuthContextType {
   user: User | null
   loading: boolean
-  login: (cpf: string, senha: string, pais: string, estado: string, lumisial: string) => Promise<boolean>
+  login: (cpf: string, senha: string, pais: string, estado: string, lumisial: string, manterLogado?: boolean) => Promise<boolean>
   logout: () => void
   isAuthenticated: boolean
 }
@@ -40,33 +40,57 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     // Verificar se há dados salvos no localStorage
     const savedUser = localStorage.getItem('gnosis_user')
+    const loginExpiry = localStorage.getItem('gnosis_login_expiry')
     
-    if (savedUser) {
+    if (savedUser && loginExpiry) {
       try {
         const userData = JSON.parse(savedUser)
-        setUser(userData)
+        const expiryDate = new Date(loginExpiry)
+        const now = new Date()
+        
+        // Verificar se o login ainda é válido (não expirou)
+        if (now < expiryDate) {
+          setUser(userData)
+        } else {
+          // Login expirado, limpar dados
+          localStorage.removeItem('gnosis_user')
+          localStorage.removeItem('gnosis_login_expiry')
+        }
       } catch (error) {
         console.error('Erro ao carregar dados do usuário:', error)
         localStorage.removeItem('gnosis_user')
+        localStorage.removeItem('gnosis_login_expiry')
       }
     }
     
     setLoading(false)
   }, [])
 
-  const login = async (cpf: string, senha: string, pais: string, estado: string, lumisial: string): Promise<boolean> => {
+  const login = async (cpf: string, senha: string, pais: string, estado: string, lumisial: string, manterLogado: boolean = false): Promise<boolean> => {
     try {
       setLoading(true)
-      
-      // Buscar o usuário na localização específica fornecida (igual ao app móvel)
-      const caminhoUsuario = `paises/${pais}/estados/${estado}/lumisial/${lumisial}/instrutor/${cpf}`
-      const usuarioRef = doc(db, caminhoUsuario)
-      const usuarioDoc = await getDoc(usuarioRef)
+
+      // Buscar o usuário verificando os diferentes tipos de instrutor
+      let usuarioDoc: any = null
+      let caminhoUsuario = ''
+
+      // 1. Tenta buscar como instrutor DIOCESANO (no nível do estado)
+      caminhoUsuario = `paises/${pais}/estados/${estado}/instrutores_diocesanos/${cpf}`
+      console.log('🔍 Tentando como diocesano:', caminhoUsuario)
+      usuarioDoc = await getDoc(doc(db, caminhoUsuario))
+
+      // 2. Se não encontrou, tenta como instrutor LOCAL (dentro do lumisial)
+      if (!usuarioDoc.exists()) {
+        caminhoUsuario = `paises/${pais}/estados/${estado}/lumisial/${lumisial}/instrutor/${cpf}`
+        console.log('🔍 Tentando como local:', caminhoUsuario)
+        usuarioDoc = await getDoc(doc(db, caminhoUsuario))
+      }
 
       if (!usuarioDoc.exists()) {
         throw new Error('Usuário não encontrado nesta localização')
       }
 
+      console.log('✅ Usuário encontrado em:', caminhoUsuario)
       const usuario = usuarioDoc.data()
       
       if (usuario.senha !== senha) {
@@ -85,6 +109,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       setUser(userData)
       localStorage.setItem('gnosis_user', JSON.stringify(userData))
+      
+      // Se "manter logado" foi selecionado, definir data de expiração para 7 dias
+      if (manterLogado) {
+        const expiryDate = new Date()
+        expiryDate.setDate(expiryDate.getDate() + 7)
+        localStorage.setItem('gnosis_login_expiry', expiryDate.toISOString())
+      } else {
+        // Se não manter logado, remover qualquer expiração existente
+        localStorage.removeItem('gnosis_login_expiry')
+      }
+      
       return true
     } catch (error) {
       console.error('Erro no login:', error)
@@ -97,6 +132,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     setUser(null)
     localStorage.removeItem('gnosis_user')
+    localStorage.removeItem('gnosis_login_expiry')
   }
 
   const isAuthenticated = !!user

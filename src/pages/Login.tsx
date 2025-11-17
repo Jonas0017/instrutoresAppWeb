@@ -190,8 +190,8 @@ const Login = () => {
                       3
                     </div>
                     <div className="pt-0.5">
-                      <p className="font-medium text-sm mb-0.5">Acesse Controle de Turmas</p>
-                      <p className="text-purple-100 text-xs">Navegue até a tela de controle de turmas</p>
+                      <p className="font-medium text-sm mb-0.5">Acesse Controle de Presença</p>
+                      <p className="text-purple-100 text-xs">Navegue até a tela de controle de presença</p>
                     </div>
                   </div>
 
@@ -254,7 +254,7 @@ const Login = () => {
                         level="H"
                         includeMargin={true}
                         imageSettings={{
-                          src: "/assets/splash-icon.png",
+                          src: "/assets/logo.png",
                           height: 36,
                           width: 36,
                           excavate: true,

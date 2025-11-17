@@ -166,38 +166,22 @@ const ConsultarTurmas = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Header */}
         <div className="mb-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                Minhas Turmas
-              </h1>
-              <p className="mt-1 text-sm text-gray-600">Gerencie todas as suas turmas em um só lugar</p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="text-right">
-                <p className="text-sm font-semibold text-gray-900">{user?.nome}</p>
-                <p className="text-xs text-gray-500">{user?.lumisial}, {user?.estado}</p>
-              </div>
-              <button
-                onClick={() => {
-                  logout()
-                  navigate('/login')
-                }}
-                className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition-all shadow-sm hover:shadow-md flex items-center space-x-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                <span>Sair</span>
-              </button>
-            </div>
-          </div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+            Minhas Turmas
+          </h1>
+          <p className="mt-1 text-sm text-gray-600">Gerencie todas as suas turmas em um só lugar</p>
         </div>
 
         {/* Filtros compactos */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
           <div className="flex items-center gap-4">
-            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -206,6 +190,8 @@ const ConsultarTurmas = () => {
                   value={instrutorSelecionado || ''}
                   onChange={(e) => setInstrutorSelecionado(e.target.value || null)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+                  title="Filtrar turmas por instrutor responsável"
+                  aria-label="Filtrar por instrutor"
                 >
                   <option value="">Todos os instrutores</option>
                   {instrutores.map(instrutor => (
@@ -222,6 +208,8 @@ const ConsultarTurmas = () => {
                   onChange={(e) => setAnoSelecionado(e.target.value || null)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                   disabled={!instrutorSelecionado}
+                  title={!instrutorSelecionado ? "Selecione um instrutor primeiro" : "Filtrar turmas por ano"}
+                  aria-label="Filtrar por ano"
                 >
                   <option value="">Todos os anos</option>
                   {instrutorSelecionado && anosPorInstrutor[instrutorSelecionado]?.map(ano => (
@@ -296,6 +284,8 @@ const ConsultarTurmas = () => {
                   <button
                     onClick={() => navigate(`/controle-presenca/${turma.id}`)}
                     className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-medium py-2.5 px-3 rounded-lg transition-all text-sm shadow-sm hover:shadow-md flex items-center justify-center gap-2"
+                    title="Controlar presença dos alunos"
+                    aria-label="Controlar presença dos alunos"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -306,6 +296,8 @@ const ConsultarTurmas = () => {
                   <button
                     onClick={() => navigate(`/visao-geral/${turma.id}`)}
                     className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium py-2.5 px-3 rounded-lg transition-all text-sm flex items-center justify-center gap-2"
+                    title="Ver estatísticas e relatórios da turma"
+                    aria-label="Ver visão geral e estatísticas da turma"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -316,6 +308,8 @@ const ConsultarTurmas = () => {
                   <button
                     onClick={() => navigate(`/inserir-turma/${turma.id}`)}
                     className="bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium py-2.5 px-3 rounded-lg transition-all text-sm flex items-center justify-center gap-2"
+                    title="Editar informações da turma"
+                    aria-label="Editar dados da turma"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -326,6 +320,8 @@ const ConsultarTurmas = () => {
                   <button
                     onClick={() => removerTurma(turma.id)}
                     className="bg-red-50 hover:bg-red-100 text-red-600 font-medium py-2.5 px-3 rounded-lg transition-all text-sm flex items-center justify-center gap-2"
+                    title="Remover turma permanentemente"
+                    aria-label="Remover turma (ação irreversível)"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -349,6 +345,8 @@ const ConsultarTurmas = () => {
             <button
               onClick={() => navigate('/inserir-turma')}
               className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-all shadow-md hover:shadow-lg inline-flex items-center gap-2"
+              title="Criar nova turma"
+              aria-label="Criar sua primeira turma"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

@@ -223,8 +223,8 @@ const ConsultarTurmas = () => {
           </div>
         </div>
 
-        {/* Lista de Turmas - Grid Responsivo */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Lista de Turmas */}
+        <div className="space-y-4">
           {(instrutorSelecionado && anoSelecionado
             ? turmasPorAno[instrutorSelecionado]?.[anoSelecionado] || []
             : instrutorSelecionado

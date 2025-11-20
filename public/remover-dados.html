@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remoção de Dados - Instrutores Gnosis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .icon {
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .alert-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .alert-box h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alert-box p {
+            color: #856404;
+            margin-bottom: 8px;
+        }
+
+        .alert-box ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            color: #667eea;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e7ff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e7ff;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 14px;
+            color: #475569;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .info-box {
+            background: #eff6ff;
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h3 {
+            color: #1e40af;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box p {
+            color: #1e40af;
+            margin-bottom: 8px;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message h3 {
+            color: #065f46;
+            margin-bottom: 10px;
+        }
+
+        .success-message p {
+            color: #065f46;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e7ff;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 24px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <span class="icon">🗑️</span>
+                Solicitação de Remoção de Dados
+            </h1>
+            <p class="subtitle">Instrutores Gnosis - Conformidade com LGPD</p>
+        </div>
+
+        <div class="alert-box">
+            <h3>⚠️ Atenção - Ação Irreversível</h3>
+            <p><strong>Ao solicitar a remoção dos seus dados, as seguintes informações serão permanentemente excluídas:</strong></p>
+            <ul>
+                <li>Nome completo</li>
+                <li>CPF</li>
+                <li>WhatsApp e código do país</li>
+                <li>Senha de acesso</li>
+                <li>Dados demográficos (país, estado, lumisial)</li>
+                <li>Histórico de turmas e palestras</li>
+            </ul>
+            <p style="margin-top: 12px;"><strong>Esta ação não pode ser desfeita.</strong></p>
+        </div>
+
+        <form id="removalForm">
+            <div class="form-section">
+                <h2>Dados Demográficos</h2>
+                <p style="color: #64748b; margin-bottom: 20px; font-size: 14px;">
+                    Essas informações são necessárias para localizar seus dados no sistema.
+                </p>
+
+                <div class="form-group">
+                    <label for="pais">País <span class="required">*</span></label>
+                    <select id="pais" name="pais" required>
+                        <option value="">Selecione o país</option>
+                        <option value="Brasil">🇧🇷 Brasil</option>
+                        <option value="Argentina">🇦🇷 Argentina</option>
+                        <option value="Chile">🇨🇱 Chile</option>
+                        <option value="Colombia">🇨🇴 Colômbia</option>
+                        <option value="Mexico">🇲🇽 México</option>
+                        <option value="Peru">🇵🇪 Peru</option>
+                        <option value="Portugal">🇵🇹 Portugal</option>
+                        <option value="Espanha">🇪🇸 Espanha</option>
+                        <option value="Estados Unidos">🇺🇸 Estados Unidos</option>
+                        <option value="outro">🌍 Outro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="estado">Estado/Província <span class="required">*</span></label>
+                    <input
+                        type="text"
+                        id="estado"
+                        name="estado"
+                        placeholder="Ex: Rio de Janeiro, São Paulo, etc."
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="lumisial">Lumisial (Cidade) <span class="required">*</span></label>
+                    <input
+                        type="text"
+                        id="lumisial"
+                        name="lumisial"
+                        placeholder="Ex: Niterói, Campinas, etc."
+                        required
+                    >
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Dados Pessoais</h2>
+
+                <div class="form-group">
+                    <label for="cpf">CPF <span class="required">*</span></label>
+                    <input
+                        type="text"
+                        id="cpf"
+                        name="cpf"
+                        placeholder="000.000.000-00"
+                        required
+                        pattern="\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11}"
+                        maxlength="14"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="nome">Nome Completo <span class="required">*</span></label>
+                    <input
+                        type="text"
+                        id="nome"
+                        name="nome"
+                        placeholder="Seu nome completo"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="whatsapp">WhatsApp <span class="required">*</span></label>
+                    <input
+                        type="tel"
+                        id="whatsapp"
+                        name="whatsapp"
+                        placeholder="(21) 99999-9999"
+                        required
+                    >
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Motivo da Remoção</h2>
+
+                <div class="form-group">
+                    <label for="motivo">Por que deseja remover seus dados? <span class="required">*</span></label>
+                    <select id="motivo" name="motivo" required>
+                        <option value="">Selecione um motivo</option>
+                        <option value="nao_uso_mais">Não uso mais o aplicativo</option>
+                        <option value="preocupacao_privacidade">Preocupação com privacidade</option>
+                        <option value="saida_organizacao">Saída da organização</option>
+                        <option value="outro">Outro motivo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="detalhes">Detalhes adicionais (opcional)</label>
+                    <textarea
+                        id="detalhes"
+                        name="detalhes"
+                        placeholder="Compartilhe mais informações se desejar..."
+                    ></textarea>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>ℹ️ Prazo de Processamento</h3>
+                <p>Sua solicitação será processada em até <strong>15 dias úteis</strong> conforme previsto pela Lei Geral de Proteção de Dados (LGPD).</p>
+                <p>Você receberá uma confirmação por e-mail quando a remoção for concluída.</p>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="confirmacao" name="confirmacao" required>
+                <label for="confirmacao">
+                    <strong>Confirmo que li e compreendi que esta ação é irreversível</strong> e que todos os meus dados pessoais, demográficos e histórico de atividades serão permanentemente excluídos do sistema Instrutores Gnosis.
+                </label>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                    Solicitar Remoção
+                </button>
+            </div>
+        </form>
+
+        <div class="success-message" id="successMessage">
+            <h3>✅ Solicitação Enviada com Sucesso</h3>
+            <p>Sua solicitação de remoção de dados foi recebida e será processada em até 15 dias úteis.</p>
+            <p>Você receberá uma confirmação por e-mail em: <strong id="emailConfirmacao"></strong></p>
+        </div>
+
+        <div class="footer">
+            <p>Dúvidas? Entre em contato: <a href="mailto:webmaster@gnosisbrasil.com">webmaster@gnosisbrasil.com</a></p>
+            <p style="margin-top: 8px;">
+                <a href="privacy-policy.html">Política de Privacidade</a> |
+                <a href="https://gnosisbrasil.com">Site Oficial</a>
+            </p>
+            <p style="margin-top: 12px; font-size: 13px;">© 2025 Gnosis Brasil. Todos os direitos reservados.</p>
+        </div>
+    </div>
+
+    <script>
+        // Habilita o botão de submit apenas quando o checkbox de confirmação for marcado
+        const confirmacao = document.getElementById('confirmacao');
+        const submitBtn = document.getElementById('submitBtn');
+
+        confirmacao.addEventListener('change', function() {
+            submitBtn.disabled = !this.checked;
+        });
+
+        // Formatação automática do CPF
+        const cpfInput = document.getElementById('cpf');
+        cpfInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+
+        // Formatação do WhatsApp
+        const whatsappInput = document.getElementById('whatsapp');
+        whatsappInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+                value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+
+        // Processamento do formulário
+        document.getElementById('removalForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Coleta os dados do formulário
+            const formData = {
+                pais: document.getElementById('pais').value,
+                estado: document.getElementById('estado').value,
+                lumisial: document.getElementById('lumisial').value,
+                cpf: document.getElementById('cpf').value,
+                nome: document.getElementById('nome').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                motivo: document.getElementById('motivo').value,
+                detalhes: document.getElementById('detalhes').value,
+                dataHora: new Date().toISOString(),
+                confirmado: document.getElementById('confirmacao').checked
+            };
+
+            // Aqui você enviaria os dados para o servidor
+            // Por enquanto, apenas simula o envio
+            console.log('Solicitação de remoção:', formData);
+
+            // Prepara o e-mail para envio
+            const emailBody = `
+Solicitação de Remoção de Dados - LGPD
+
+=== DADOS DEMOGRÁFICOS ===
+País: ${formData.pais}
+Estado: ${formData.estado}
+Lumisial: ${formData.lumisial}
+
+=== DADOS PESSOAIS ===
+CPF: ${formData.cpf}
+Nome: ${formData.nome}
+WhatsApp: ${formData.whatsapp}
+
+=== MOTIVO DA REMOÇÃO ===
+Motivo: ${formData.motivo}
+Detalhes: ${formData.detalhes || 'Não informado'}
+
+=== INFORMAÇÕES TÉCNICAS ===
+Caminho no Firestore: paises/${formData.pais}/estados/${formData.estado}/lumisial/${formData.lumisial}/instrutor/${formData.cpf}
+Data/Hora da Solicitação: ${new Date(formData.dataHora).toLocaleString('pt-BR')}
+
+Esta solicitação foi confirmada pelo usuário e deve ser processada em até 15 dias úteis conforme LGPD (Lei 13.709/2018).
+
+AÇÕES NECESSÁRIAS:
+1. Excluir documento do Firestore no caminho acima
+2. Remover todos os dados relacionados (turmas, palestras, presença de alunos)
+3. Enviar e-mail de confirmação para o usuário
+4. Registrar a exclusão no log de conformidade LGPD
+            `.trim();
+
+            // Abre o cliente de e-mail com os dados
+            const mailtoLink = `mailto:webmaster@gnosisbrasil.com?subject=Solicitação de Remoção de Dados LGPD - CPF ${formData.cpf}&body=${encodeURIComponent(emailBody)}`;
+            window.location.href = mailtoLink;
+
+            // Exibe mensagem de sucesso
+            document.getElementById('removalForm').style.display = 'none';
+            document.querySelector('.alert-box').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('emailConfirmacao').textContent = 'webmaster@gnosisbrasil.com';
+
+            // Scroll para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

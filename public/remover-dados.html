@@ -276,25 +276,23 @@
     <div class="container">
         <div class="header">
             <h1>
-                <span class="icon">🗑️</span>
                 Solicitação de Remoção de Dados
             </h1>
-            <p class="subtitle">Instrutores Gnosis - Conformidade com LGPD</p>
+            <p class="subtitle">Instrutores 1ª Câmara Gnosis Brasil - Conformidade com LGPD</p>
         </div>
 
         <div class="alert-box">
             <h3>⚠️ Atenção - Ação Irreversível</h3>
-            <p><strong>Ao solicitar a remoção dos seus dados, as seguintes informações serão permanentemente excluídas do documento do instrutor:</strong></p>
+            <p><strong>Ao solicitar a remoção seus dados pessoais serão permanentemente excluídos:</strong></p>
             <ul>
                 <li>Nome completo</li>
                 <li>CPF</li>
-                <li>WhatsApp e código do país</li>
+                <li>WhatsApp</li>
                 <li>Senha de acesso</li>
-                <li>Todas as turmas que você gerencia</li>
-                <li>Histórico de palestras ministradas</li>
-                <li>Registros de presença de alunos</li>
             </ul>
-            <p style="margin-top: 12px;"><strong>Esta ação não pode ser desfeita.</strong></p>
+            <p style="margin-top: 12px; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; color: #991b1b;">
+                <strong>Esta ação NÃO pode ser desfeita. Seus dados pessoais serão apagados definitivamente.</strong>
+            </p>
         </div>
 
         <form id="removalForm">
@@ -322,7 +320,7 @@
                         type="text"
                         id="estado"
                         name="estado"
-                        placeholder="Ex: Rio de Janeiro"
+                        placeholder="Ex: Rio de Janeiro, São Paulo"
                         required
                     >
                     <small style="color: #64748b; margin-top: 4px; display: block;">Digite o estado onde você está cadastrado</small>
@@ -334,15 +332,15 @@
                         type="text"
                         id="lumisial"
                         name="lumisial"
-                        placeholder="Ex: 001 ou Niterói"
+                        placeholder="Ex: Binah, Rafael, Uriel, etc."
                         required
                     >
-                    <small style="color: #64748b; margin-top: 4px; display: block;">Digite o número ou nome do lumisial onde você está cadastrado</small>
+                    <small style="color: #64748b; margin-top: 4px; display: block;">Digite o nome do lumisial onde você está cadastrado</small>
                 </div>
             </div>
 
             <div class="form-section">
-                <h2>Dados Pessoais</h2>
+                <h2>Seus Dados Pessoais</h2>
 
                 <div class="form-group">
                     <label for="cpf">CPF <span class="required">*</span></label>
@@ -413,7 +411,7 @@
             <div class="checkbox-group">
                 <input type="checkbox" id="confirmacao" name="confirmacao" required>
                 <label for="confirmacao">
-                    <strong>Confirmo que li e compreendi que esta ação é irreversível</strong> e que todos os meus dados pessoais, demográficos e histórico de atividades serão permanentemente excluídos do sistema Instrutores Gnosis.
+                    <strong>Confirmo que li e compreendi que esta ação é irreversível</strong> e que todos os meus dados pessoais serão permanentemente excluídos do sistema de Instrutores do Instituto Gnosis Brasil.
                 </label>
             </div>
 
@@ -523,8 +521,8 @@ Data/Hora da Solicitação: ${new Date(formData.dataHora).toLocaleString('pt-BR'
 Esta solicitação foi confirmada pelo usuário e deve ser processada em até 15 dias úteis conforme LGPD (Lei 13.709/2018).
 
 AÇÕES NECESSÁRIAS:
-1. Excluir documento do Firestore no caminho acima
-2. Remover todos os dados relacionados (turmas, palestras, presença de alunos)
+1. Excluir APENAS os dados pessoais do instrutor no Firestore (nome, CPF, WhatsApp, senha)
+2. NÃO excluir turmas, palestras ou registros de presença
 3. Enviar e-mail de confirmação para o usuário
 4. Registrar a exclusão no log de conformidade LGPD
             `.trim();

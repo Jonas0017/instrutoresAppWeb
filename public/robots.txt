@@ -1,0 +1,40 @@
+# Robots.txt - Gnosis Instrutores
+# Bloqueia indexação de páginas sensíveis
+
+User-agent: *
+Disallow: /privacy-policy.html
+Disallow: /remover-dados.html
+Disallow: /login
+Disallow: /admin
+Disallow: /api/
+
+# Bloqueia todos os crawlers de IA
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+# Sitemap (se você tiver um no futuro)
+# Sitemap: https://e0c80ossckck0gsgs8wwg804.145.223.95.103.sslip.io/sitemap.xml

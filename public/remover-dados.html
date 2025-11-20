@@ -7,6 +7,7 @@
     <meta name="googlebot" content="noindex, nofollow">
     <meta name="bingbot" content="noindex, nofollow">
     <title>Remoção de Dados - Instrutores Gnosis</title>
+
     <style>
         * {
             margin: 0;
@@ -283,14 +284,15 @@
 
         <div class="alert-box">
             <h3>⚠️ Atenção - Ação Irreversível</h3>
-            <p><strong>Ao solicitar a remoção dos seus dados, as seguintes informações serão permanentemente excluídas:</strong></p>
+            <p><strong>Ao solicitar a remoção dos seus dados, as seguintes informações serão permanentemente excluídas do documento do instrutor:</strong></p>
             <ul>
                 <li>Nome completo</li>
                 <li>CPF</li>
                 <li>WhatsApp e código do país</li>
                 <li>Senha de acesso</li>
-                <li>Dados demográficos (país, estado, lumisial)</li>
-                <li>Histórico de turmas e palestras</li>
+                <li>Todas as turmas que você gerencia</li>
+                <li>Histórico de palestras ministradas</li>
+                <li>Registros de presença de alunos</li>
             </ul>
             <p style="margin-top: 12px;"><strong>Esta ação não pode ser desfeita.</strong></p>
         </div>
@@ -304,19 +306,14 @@
 
                 <div class="form-group">
                     <label for="pais">País <span class="required">*</span></label>
-                    <select id="pais" name="pais" required>
-                        <option value="">Selecione o país</option>
-                        <option value="Brasil">🇧🇷 Brasil</option>
-                        <option value="Argentina">🇦🇷 Argentina</option>
-                        <option value="Chile">🇨🇱 Chile</option>
-                        <option value="Colombia">🇨🇴 Colômbia</option>
-                        <option value="Mexico">🇲🇽 México</option>
-                        <option value="Peru">🇵🇪 Peru</option>
-                        <option value="Portugal">🇵🇹 Portugal</option>
-                        <option value="Espanha">🇪🇸 Espanha</option>
-                        <option value="Estados Unidos">🇺🇸 Estados Unidos</option>
-                        <option value="outro">🌍 Outro</option>
-                    </select>
+                    <input
+                        type="text"
+                        id="pais"
+                        name="pais"
+                        placeholder="Ex: Brasil"
+                        required
+                    >
+                    <small style="color: #64748b; margin-top: 4px; display: block;">Digite o país onde você está cadastrado</small>
                 </div>
 
                 <div class="form-group">
@@ -325,20 +322,22 @@
                         type="text"
                         id="estado"
                         name="estado"
-                        placeholder="Ex: Rio de Janeiro, São Paulo, etc."
+                        placeholder="Ex: Rio de Janeiro"
                         required
                     >
+                    <small style="color: #64748b; margin-top: 4px; display: block;">Digite o estado onde você está cadastrado</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="lumisial">Lumisial (Cidade) <span class="required">*</span></label>
+                    <label for="lumisial">Lumisial <span class="required">*</span></label>
                     <input
                         type="text"
                         id="lumisial"
                         name="lumisial"
-                        placeholder="Ex: Niterói, Campinas, etc."
+                        placeholder="Ex: 001 ou Niterói"
                         required
                     >
+                    <small style="color: #64748b; margin-top: 4px; display: block;">Digite o número ou nome do lumisial onde você está cadastrado</small>
                 </div>
             </div>
 
@@ -445,10 +444,11 @@
     </div>
 
     <script>
-        // Habilita o botão de submit apenas quando o checkbox de confirmação for marcado
+        // Elementos do DOM
         const confirmacao = document.getElementById('confirmacao');
         const submitBtn = document.getElementById('submitBtn');
 
+        // Habilita o botão de submit apenas quando o checkbox de confirmação for marcado
         confirmacao.addEventListener('change', function() {
             submitBtn.disabled = !this.checked;
         });

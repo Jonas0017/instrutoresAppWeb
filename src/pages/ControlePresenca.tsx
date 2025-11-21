@@ -9,6 +9,7 @@ import { ModalTransferenciaAluno } from '../components/ModalTransferenciaAluno'
 import { useHistoricoAluno } from '../hooks/useHistoricoAluno'
 import { HistoricoAluno } from '../types'
 import { getGreeting, getResumo, getMotivacao } from '../utils/whatsappMessages'
+import { decrypt, isEncrypted } from '@/lib/crypto'
 
 interface Aluno {
   id: string
@@ -482,7 +483,19 @@ const ControlePresenca = () => {
   const abrirWhatsApp = async (tipo: 'conversa' | 'resumo' | 'motivacao') => {
     if (!alunoSelecionado?.whatsapp) return
 
-    const numeroFormatado = alunoSelecionado.whatsapp.replace(/\D/g, "")
+    // Descriptografa o WhatsApp se estiver criptografado
+    let whatsappDescriptografado = alunoSelecionado.whatsapp;
+    if (isEncrypted(whatsappDescriptografado)) {
+      try {
+        whatsappDescriptografado = await decrypt(whatsappDescriptografado);
+      } catch (error) {
+        console.error("Erro ao descriptografar WhatsApp:", error);
+        alert("Não foi possível processar o número do WhatsApp");
+        return;
+      }
+    }
+
+    const numeroFormatado = whatsappDescriptografado.replace(/\D/g, "")
     const codigoPaisFormatado = alunoSelecionado.codigoPais?.replace(/\D/g, "") || "55"
     const numeroCompleto = `${codigoPaisFormatado}${numeroFormatado}`
 

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { doc, getDoc, db } from '@/lib/firebase'
+import { decrypt, isEncrypted } from '@/lib/crypto'
 
 interface User {
   nome: string
@@ -92,24 +93,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       console.log('✅ Usuário encontrado em:', caminhoUsuario)
       const usuario = usuarioDoc.data()
-      
-      if (usuario.senha !== senha) {
+
+      // Descriptografa a senha armazenada (se estiver criptografada)
+      let senhaArmazenada = usuario.senha
+      if (isEncrypted(senhaArmazenada)) {
+        senhaArmazenada = await decrypt(senhaArmazenada)
+      }
+
+      // Verifica a senha
+      if (senhaArmazenada !== senha) {
         throw new Error('CPF ou senha inválidos')
+      }
+
+      // Descriptografa CPF e WhatsApp se necessário
+      let cpfDescriptografado = usuario.cpf
+      let whatsappDescriptografado = usuario.whatsapp
+
+      if (isEncrypted(cpfDescriptografado)) {
+        cpfDescriptografado = await decrypt(cpfDescriptografado)
+      }
+
+      if (isEncrypted(whatsappDescriptografado)) {
+        whatsappDescriptografado = await decrypt(whatsappDescriptografado)
       }
 
       const userData = {
         nome: usuario.nome,
-        cpf: usuario.cpf,
+        cpf: cpfDescriptografado,
         codigoPais: usuario.codigoPais,
-        whatsapp: usuario.whatsapp,
+        whatsapp: whatsappDescriptografado,
         pais,
         estado,
         lumisial
       }
-      
+
       setUser(userData)
       localStorage.setItem('gnosis_user', JSON.stringify(userData))
-      
+
       // Se "manter logado" foi selecionado, definir data de expiração para 7 dias
       if (manterLogado) {
         const expiryDate = new Date()
@@ -119,7 +139,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Se não manter logado, remover qualquer expiração existente
         localStorage.removeItem('gnosis_login_expiry')
       }
-      
+
       return true
     } catch (error) {
       console.error('Erro no login:', error)

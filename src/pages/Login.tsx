@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast'
 import { QrCode, RefreshCw, Smartphone, ScanLine } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
 import { generateSessionId, createQRSession, listenToQRSession, type QRAuthData } from '../services/qrAuthService'
+import { decrypt, isEncrypted } from '../lib/crypto'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -66,9 +67,15 @@ const Login = () => {
             const dadosUsuario = usuarioDoc.data()
             console.log('Senha encontrada! Fazendo login...')
 
+            // Descriptografa a senha se estiver criptografada
+            let senhaDescriptografada = dadosUsuario.senha
+            if (isEncrypted(senhaDescriptografada)) {
+              senhaDescriptografada = await decrypt(senhaDescriptografada)
+            }
+
             const resultado = await login(
               authData.cpf,
-              dadosUsuario.senha, // Usa a senha do Firestore
+              senhaDescriptografada, // Usa a senha descriptografada do Firestore
               authData.pais,
               authData.estado,
               authData.lumisial,

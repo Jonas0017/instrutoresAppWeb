@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { HistoricoService } from '../services/historicoService'
 import { HistoricoAluno, TurmaDisponivel } from '../types'
+import { decrypt, isEncrypted } from '@/lib/crypto'
 
 export const useHistoricoAluno = () => {
   const [historico, setHistorico] = useState<HistoricoAluno | null>(null)
@@ -84,12 +85,24 @@ export const useHistoricoAluno = () => {
         return false
       }
 
+      // Descriptografa o WhatsApp se estiver criptografado
+      let whatsappDescriptografado = whatsapp
+      if (isEncrypted(whatsapp)) {
+        try {
+          whatsappDescriptografado = await decrypt(whatsapp)
+        } catch (error) {
+          console.error('Erro ao descriptografar WhatsApp:', error)
+          alert('Não foi possível processar o número do WhatsApp')
+          return false
+        }
+      }
+
       const mensagemHistorico = HistoricoService.formatarHistoricoParaWhatsApp(historico)
       const saudacao = `Olá, ${historico.nome}! Tudo bem?`
-      
+
       const mensagemCompleta = `${saudacao}\n\n${mensagemHistorico}`
-      
-      const numeroFormatado = whatsapp.replace(/\D/g, '')
+
+      const numeroFormatado = whatsappDescriptografado.replace(/\D/g, '')
       const codigoPaisFormatado = codigoPais?.replace(/\D/g, '') || '55'
       const numeroCompleto = `${codigoPaisFormatado}${numeroFormatado}`
 

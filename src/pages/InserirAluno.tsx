@@ -4,6 +4,7 @@ import { collection, getDocs, doc, setDoc, getDoc, db as firestore } from '@/lib
 import { useAuth } from '../context/AuthContext'
 import Loading from '../components/Loading'
 import Navigation from '../components/Navigation'
+import { encrypt, decrypt, isEncrypted } from '@/lib/crypto'
 
 const paisesComCodigo = [
   { nome: "Afeganistão", codigo: "Afeganistão (+93)", bandeira: "🇦🇫" },
@@ -91,7 +92,17 @@ const InserirAluno = () => {
       if (alunoSnapshot.exists()) {
         const alunoData = alunoSnapshot.data()
         setNome(alunoData.nome || "")
-        setWhatsapp(alunoData.whatsapp || "")
+
+        // Descriptografa o WhatsApp se estiver criptografado
+        let whatsappDescriptografado = alunoData.whatsapp || ""
+        if (whatsappDescriptografado && isEncrypted(whatsappDescriptografado)) {
+          try {
+            whatsappDescriptografado = await decrypt(whatsappDescriptografado)
+          } catch (error) {
+            console.error("Erro ao descriptografar WhatsApp:", error)
+          }
+        }
+        setWhatsapp(whatsappDescriptografado)
         setCodigoPais(alunoData.codigoPais || "")
       } else {
         setNome("")
@@ -139,11 +150,14 @@ const InserirAluno = () => {
 
       const alunosCollection = collection(firestore, `${basePath}/turmas/${turmaId}/alunos`)
 
+      // Criptografa o WhatsApp antes de salvar
+      const whatsappCriptografado = await encrypt(whatsappCompleto)
+
       if (alunoId) {
         // Atualizar aluno existente
         const alunoIdStr = String(alunoId)
         const alunoDoc = doc(alunosCollection, alunoIdStr)
-        await setDoc(alunoDoc, { nome, codigoPais, whatsapp }, { merge: true })
+        await setDoc(alunoDoc, { nome, codigoPais, whatsapp: whatsappCriptografado }, { merge: true })
 
         alert("Aluno atualizado com sucesso!")
       } else {
@@ -162,7 +176,7 @@ const InserirAluno = () => {
 
         // Inserir novo aluno
         const novoAlunoRef = doc(alunosCollection, novoId)
-        await setDoc(novoAlunoRef, { nome, codigoPais, whatsapp })
+        await setDoc(novoAlunoRef, { nome, codigoPais, whatsapp: whatsappCriptografado })
 
         // Adicionar presença para o novo aluno
         await adicionarPresencaParaAluno(novoId)
